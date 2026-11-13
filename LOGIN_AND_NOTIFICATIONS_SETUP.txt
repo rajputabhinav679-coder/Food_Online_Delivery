@@ -1,0 +1,68 @@
+FOOD ONLINE CAFE - OWNER LOGIN AND EMAIL NOTIFICATIONS
+======================================================
+
+CAFE OWNER LOGIN
+----------------
+Email: abhinavsinghh0019@gmail.com
+Password: (see .streamlit/secrets.toml -> [auth] cafe_password)
+
+The owner account is created/updated automatically at app startup from
+.streamlit/secrets.toml. If you deploy on Streamlit Community Cloud, copy the
+contents of .streamlit/secrets.toml into App -> Settings -> Secrets, then save
+and reboot the app. The local secrets.toml file is ignored by Git.
+
+IMPORTANT: This is the Food Ordering app login password. It is NOT the Gmail
+account password and it is NOT the Gmail App Password. Keep it private and
+change it before sharing the deployed app with anyone else.
+
+GMAIL EMAIL SENDING SETUP
+-------------------------
+Order email notifications are configured to use:
+  Sender:    abhinavsinghh0019@gmail.com
+  Owner inbox for new orders: abhinavsinghh0019@gmail.com
+
+To actually send emails, you must add a Google App Password:
+1. Sign in to the Google account above.
+2. Ensure 2-Step Verification is enabled.
+3. Create a Google App Password for this app.
+4. Open .streamlit/secrets.toml.
+5. Paste the generated 16-character App Password into [email].app_password.
+   Example: app_password = "abcd efgh ijkl mnop"
+6. Save and restart Streamlit. On Streamlit Cloud, update App -> Settings ->
+   Secrets and reboot the app.
+
+Never use your normal Gmail password in app_password. Never commit
+.streamlit/secrets.toml to a public GitHub repository.
+
+NOTIFICATION FLOW
+-----------------
+1. When a customer places an order, the Cafe Owner inbox above receives an
+   order notification, including customer details, food items, amount and
+   delivery address.
+2. When the Cafe Owner changes the order status from PLACED to CONFIRMED,
+   all active Delivery Boy accounts that have a valid registered email receive
+   the confirmed-order notification.
+3. The first delivery boy who accepts the order in the Delivery Boy Dashboard
+   becomes assigned to it.
+4. No SMS or WhatsApp is sent. The customer phone number is included in the
+   delivery email so the delivery boy can contact the customer.
+
+REGISTER DELIVERY BOYS
+----------------------
+Use Cafe Owner Dashboard -> Delivery Boy Management. Register each delivery
+boy with the correct active email address and mobile number. The email address
+is the notification destination. The mobile number is included in the email.
+
+TEST
+----
+1. Start the app: streamlit run app.py
+2. Log in with the owner email and app login password above.
+3. Open Cafe Owner Dashboard -> Order Email Notifications (setup & log).
+4. Confirm that the owner recipient is abhinavsinghh0019@gmail.com.
+5. Send a test email and check Inbox and Spam/Junk.
+6. Place a test order and check the notification log.
+7. Confirm the order and check the delivery boy email inboxes.
+
+A SENT log entry means the SMTP server accepted the email. Check Inbox and
+Spam/Junk to confirm final delivery. Actual email delivery cannot be verified
+until a valid Google App Password is configured and a live test is sent.

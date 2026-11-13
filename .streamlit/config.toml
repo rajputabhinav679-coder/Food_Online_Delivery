@@ -1,0 +1,5 @@
+[client]
+# Show the "Rerun" option (and other developer options) in the app menu
+# for everybody, also after deployment. Without this, deployed apps hide it
+# from normal visitors.
+toolbarMode = "developer"

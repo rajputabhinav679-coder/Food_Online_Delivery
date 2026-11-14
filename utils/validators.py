@@ -87,6 +87,35 @@ def validate_name(raw_name):
         return False, "Name must contain at least 2 letters."
     return True, name.upper()
 
+def validate_city(raw_city):
+    """A city name must contain only letters (and a single space between words).
+
+    Digits and symbols such as 12345, Delhi1 or Pune@ are not allowed.
+    Letters of any language (English, Hindi ...) are accepted.
+
+    Returns (True, "Clean City") or (False, "error message").
+    """
+    city = (raw_city or "").strip()
+    if not city:
+        return False, "Please enter your city."
+    if re.search(r"\s{2,}", city):
+        return False, "City cannot have extra spaces. Use only one space between words."
+    letters = 0
+    for ch in city:
+        if ch == " ":
+            continue
+        category = unicodedata.category(ch)
+        # L* = letters, M* = marks of Hindi / other scripts (matras)
+        if category[0] == "L":
+            letters += 1
+        elif category[0] == "M":
+            continue
+        else:
+            return False, "City must contain only letters. Numbers and symbols are not allowed."
+    if letters < 2:
+        return False, "City must contain at least 2 letters."
+    return True, " ".join(word.capitalize() for word in city.split(" "))
+
 def validate_password(password):
     """Password rule: 6 to 64 characters. Returns (True, "") or (False, message)."""
     if not password or len(password) < 6:

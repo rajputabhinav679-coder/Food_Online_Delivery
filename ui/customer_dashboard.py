@@ -1,7 +1,7 @@
 import streamlit as st
 from config.payment_config import UPI_QR_IMAGE, UPI_ID
 from config.app_config import (ESTIMATED_DELIVERY_MINUTES, MAX_ITEM_QUANTITY, AUTO_REFRESH_SECONDS)
-from utils.validators import validate_mobile, validate_name, tel_link, display_name
+from utils.validators import validate_mobile, validate_name, validate_city, tel_link, display_name
 from utils.time_utils import delivery_eta, format_datetime
 from utils.labels import label
 from utils.image_utils import prepare_payment_screenshot, ALLOWED_TYPES
@@ -240,7 +240,11 @@ def show_customer_dashboard(
                     placeholder="Enter area and landmark",
                     key="area_details"
                 )
-                city = st.text_input("City", placeholder="Enter city", key="delivery_city")
+                city = st.text_input("City", placeholder="Enter city (letters only)", key="delivery_city")
+                if city.strip():
+                    city_ok, city_message = validate_city(city)
+                    if not city_ok:
+                        st.error(city_message)
                 pincode = st.text_input(
                     "PIN Code",
                     placeholder="Enter 6-digit PIN code",
@@ -324,8 +328,9 @@ def show_customer_dashboard(
                     if not area_details.strip():
                         st.error("Please enter area or landmark.")
                         st.stop()
-                    if not city.strip():
-                        st.error("Please enter your city.")
+                    city_ok, city_result = validate_city(city)
+                    if not city_ok:
+                        st.error(city_result)
                         st.stop()
                     if len(pin_digits) != 6:
                         st.error("PIN code must contain 6 digits.")
@@ -336,7 +341,7 @@ def show_customer_dashboard(
                         f"Mobile: {phone_digits}, "
                         f"{house_details.strip()}, "
                         f"{area_details.strip()}, "
-                        f"{city.strip()} - {pin_digits}"
+                        f"{city_result} - {pin_digits}"
                     )
                     # UPI NEEDS A PAYMENT SCREENSHOT
                     if payment_method == "UPI" and not shot_bytes:
